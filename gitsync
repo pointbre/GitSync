@@ -1,7 +1,8 @@
 #!/bin/sh
 #
 # Welcome to GitSync - a commit and push script for easy using git!
-# Copyright (C) 2009-2010: Daniel Blaschke and Rene Sedmik
+# Copyright (C) 2009: Daniel Blaschke and Rene Sedmik
+# Copyright (C) 2010: Daniel Blaschke
 # Web: http://www.sourceforge.net/projects/gitsync/
 #
 # This script is free software; you can redistribute it and/or modify
@@ -18,28 +19,144 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 #
-# Last change: 2010-01-15
+# Last change: 2010-04-13
 #
 #############################################
-# OPTIONS:
+# (GLOBAL) OPTIONS:
 #############################################
 GIT_SERVER="auto"
 USE_EDITOR="no"
 GIT_DIR=".git"
-# Set GIT_REP if you want to call this script from some other
-# place than the base directory of your git-repository!
-GIT_REP="."
+# change these values to the names of your custom scripts, if
+# you have any to be called before and after synchronizing
+# with GitSync!
+CUSTOM_START_SCRIPT=""
+CUSTOM_END_SCRIPT=""
 #############################################
 # CODE:
 #############################################
 
 echo "------------------------------------------------------------"
-echo "GitSync - GIT update script"
-echo "Version 1.1.1"
+echo "GitSync - a GIT update script"
+echo "Version 1.2.0"
 echo "------------------------------------------------------------"
 
-cd $GIT_REP
+# check for git-installation
+GIT_PATH="`which git`"
+if [ "$GIT_PATH" = "" ] ; then 
+ echo ""
+ echo "ERROR: command git not found! Please install the version control system 'git'"
+ echo "from www.git-scm.com before using this script!"
+ exit 1
+fi
 
+#### define functions to be used later in this script:
+# function for reading config files
+READCFG () {
+ if [ "$GS_config" != "" ]; then
+    echo "GitSync config '$GS_config' found - reading"
+    GS_key="";
+    for line in $(cat "$GS_config"); do
+     if [ "$GS_key" = "GIT_SERVER" ]; then GIT_SERVER="$line"; fi;
+     if [ "$GS_key" = "USE_EDITOR" ]; then USE_EDITOR="$line"; fi;
+     if [ "$GS_key" = "GIT_DIR" ]; then GIT_DIR="$line"; fi;
+     if [ "$GS_key" = "CUSTOM_START_SCRIPT" ]; then CUSTOM_START_SCRIPT="$line"; fi;
+     if [ "$GS_key" = "CUSTOM_END_SCRIPT" ]; then CUSTOM_END_SCRIPT="$line"; fi;
+     GS_key=$line;
+    done
+ fi
+}
+
+# function for calling git pull/push:
+GITP () {
+ if git $1; then
+  echo "ok."
+ else
+  echo "ERROR: GIT-$1 returned an error."
+  exit 2
+ fi
+}
+
+# function for calling CUSTOM_START/END_SCRIPT:
+SCRIPT () {
+ if [ "$1" != "" ]; then
+  if test -x "./$1"; then
+	echo "Calling custom script '$1' ..."
+	./$1
+	if [ "$1" = "$CUSTOM_START_SCRIPT" ]; then
+	 echo "done."
+	 echo "---------------------------------------"
+	fi
+  else
+	echo "WARNING: Unable to call your custom script '$1'."
+	echo "Make sure it is present and executable!"
+  fi
+ fi
+}
+
+# function for invoking git commit:
+GITC () {
+ if [ "$GITADDLIST" = "" ]; then
+  if [ "$1" = "" ]; then
+   git commit -a 
+  else
+   git commit -a $1 "$2"
+  fi
+ else
+  if [ "$2" = "" ]; then
+   git commit
+  else
+   git commit $1 "$2"
+  fi
+ fi
+}
+####
+
+
+# parsing command line arguments
+GITCOMM=""
+GITADDLIST=""
+GIT_REP="."
+
+PARSE=""
+for i
+do
+ if [ "$PARSE" = "-m" ]; then GITCOMM=$i; fi
+ if [ "$PARSE" = "-f" ]; then GITADDLIST=$i; fi
+ PARSE=$i
+done
+if [ "$PARSE" != "" ] && [ "$PARSE" != "$GITCOMM" ] && [ "$PARSE" != "$GITADDLIST" ]; then GIT_REP=$PARSE; fi
+
+
+# entering the directory of the repository
+if cd "$GIT_REP"; then 
+ continue
+else
+ echo ""
+ echo "ERROR: folder '$GIT_REP' does not exist. Possibly a mistyped command line argument?"
+ echo "GitSync-syntax is (where all arguments are optional):"
+ echo "gitsync -m 'commit Message' -f 'Files to add' /location/of/repository"
+ exit 1
+fi
+
+
+# searching for custom GitSync-configuration file
+GS_config=""
+if test -r "$HOME/gitsync.conf"; then GS_config="$HOME/gitsync.conf"; fi;
+if test -r "$HOME/.gitsync.conf"; then GS_config="$HOME/.gitsync.conf"; fi;
+READCFG
+GS_config=""
+if test -r "./gitsync.conf"; then GS_config="./gitsync.conf"; fi;
+READCFG
+
+
+# check values of variables for validity
+if [ "$GIT_SERVER" != "yes" ] && [ "$GIT_SERVER" != "no" ] && [ "$GIT_SERVER" != "auto" ]; then
+ echo "ERROR: invalid gitsync-configuration!"
+ exit 1
+fi
+
+# check if we are in the correct directory
 if test -r ./$GIT_DIR/config; then
    dirok=true
 else
@@ -47,20 +164,19 @@ else
    exit 1
 fi
 
-# Uncomment and customize if you want git to use a different editor than 
-# the system default (Linux only)!
-# if [ `uname -o` = "GNU/Linux" ]; then
-#	export EDITOR=emacs
-# fi
+# if USE_EDITOR is set to the name of an editor, use it
+if [ "$USE_EDITOR" != "yes" ] && [ "$USE_EDITOR" != "no" ]; then
+ EDITOR_PATH="`which $USE_EDITOR`"
+ if [ "$EDITOR_PATH" = "" ] ; then 
+  echo "WARNING: editor '$USE_EDITOR' does not exist, falling back to system default."; 
+ else
+  export EDITOR=$USE_EDITOR
+ fi
+ USE_EDITOR="yes"
+fi
 
-# verify permissions - customize and uncomment to use this test!
-# if test -x ./$GIT_DIR/config; then
-#	echo "WARNING: wrong permissions detected! Correcting ..."
-#	chmod -R a-x+X ./
-#	chmod a+x gitsync
-#	echo "done."
-#	echo "---------------------------------------"
-# fi
+# if present, calling custom "start" script first
+SCRIPT "$CUSTOM_START_SCRIPT"
 
 # if option GIT_SERVER="auto", check file .git/config to decide whether
 # GIT_SERVER should be "yes" or "no":
@@ -78,19 +194,11 @@ echo "Checking repository status ..."
 if [ "$(git status | grep 'nothing to commit')" != "" ]; then
   if [ "$GIT_SERVER" = "yes" ]; then
 	echo "Nothing to commit - updating your local repository instead ..."
-	if git pull; then
-	  echo "ok."
-	else
-	  echo "ERROR: GIT-pull returned an error."
-	  exit 2
-	fi
+	GITP pull
 	echo "Pushing to the global repository ..."
-	if git push; then
-	  echo "ok."
-	else
-	  echo "ERROR: GIT-push returned an error."
-	  exit 3
-	fi
+	GITP push
+	# if present, calling custom "end" script before exiting
+	SCRIPT "$CUSTOM_END_SCRIPT"
   else
 	echo "Nothing to commit (working directory clean)."
   fi
@@ -100,8 +208,13 @@ echo "done."
 echo "---------------------------------------"
 
 # adding new files to the local repository
-echo "Adding new files ..."
-if git add .; then
+echo "Adding new/changed files ..."
+if if [ "$GITADDLIST" = "" ]; then
+	git add .
+   else
+#	echo "Only adding: '$GITADDLIST'"
+	git add -v $GITADDLIST
+   fi; then
   echo "ok."
   echo "---------------------------------------"
 else
@@ -112,17 +225,17 @@ fi
 # committing the local changes
 echo "Committing all of your changes ..."
 
-if if [ "$1" = "" ]; then 
+if if [ "$GITCOMM" = "" ]; then 
 	  if [ "$USE_EDITOR" = "yes" ]; then
-		git commit -a
+		GITC
 	  else
 		echo "Please type your comment: "
 		read gitcomment
-		git commit -a -m "$gitcomment"
+		GITC -m "$gitcomment"
 	  fi
    else
-	  echo "... using your comment: $1"
-	  git commit -a -m "$1"
+	  echo "... using your comment: '$GITCOMM'"
+	  GITC -m "$GITCOMM"
    fi; then
   echo "ok."
   echo "---------------------------------------"
@@ -135,26 +248,18 @@ fi
 if [ "$GIT_SERVER" = "yes" ]; then
 # initiating a pull to achieve a consistent local repository
  echo "Updating your local repository ..."
- if git pull; then
-	echo "ok."
-	echo "---------------------------------------"
- else
-	echo "ERROR: GIT-pull returned an error."
-	exit 2
- fi
-
+ GITP pull
 # pushing the changes to the global repo
  echo "Pushing to the global repository ..."
- if git push; then
-	echo "ok."
-	echo "---------------------------------------"
- else
-	echo "ERROR: GIT-push returned an error."
-	exit 3
- fi
- echo "done."
- echo ""
+ GITP push
+ echo "---------------------------------------"
 fi
+
+# if present, calling custom "end" script before exiting
+SCRIPT "$CUSTOM_END_SCRIPT"
+
+echo "done."
+echo ""
 
 exit 0
 # end of script

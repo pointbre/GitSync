@@ -1,0 +1,48 @@
+GitSync Release Notes
+=====================
+
+
+Changes from version 1.1.1 to version 1.2.0:
+---------------------------------------------
+.) new command line syntax:
+   gitsync [-m 'commit Message' -f 'Files to add' /location/of/repository]
+   (The default behaviour when omitting options is: "gitsync -f . .")
+.) GitSync can now be used to add/commit only certain files (or subfolders)
+   (-f option)
+.) GIT_REP-variable deprecated: replaced by command line argument
+.) added support for custom configuration file
+   "gitsync.conf" for overriding options of GitSync
+.) new optional variables CUSTOM_START_SCRIPT and 
+   CUSTOM_END_SCRIPT for calling custom scripts before 
+   and/or after syncing
+.) new option: USE_EDITOR="name-of-editor" (in addition to 
+   "no" and "yes", where the systems default editor is used)
+.) some minor optimizations and checks (e.g. for existing
+   git command)
+.) included examples for gitsync.conf and custom scripts, 
+   and updated README-file
+
+
+Changes from version 1.1.0 to version 1.1.1:
+---------------------------------------------
+.) enhanced compatibility: made the script also work with 
+   dash (previously only bash)
+
+
+Changes from version 1.0.1 to version 1.1.0:
+---------------------------------------------
+.) New default option GIT_SERVER="auto": searches the file 
+   .git/config for a configured git-server (i.e. remote 
+   repository) in order to determine whether pull/push are 
+   necessary. (Nonetheless, the GIT_SERVER-options "yes" 
+   and "no" are still valid and will override the check above.
+.) minor bugfix
+.) README-file updated accordingly
+
+
+Changes from version 1.0.0 to version 1.0.1:
+---------------------------------------------
+.) When $GIT_SERVER is set to "yes", gitsync now always tries 
+   to push to the server (even if nothing is to be committed), 
+   so that if the network connection breaks down during a 
+   commit/push, another call of gitsync will continue the job.

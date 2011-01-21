@@ -1,6 +1,6 @@
-------------------------------------------
-HOW TO USE GITSYNC
-------------------------------------------
+==========================================
+   HOW TO USE GITSYNC 1.2.0:
+==========================================
 
 GitSync is a shell script designed to simplify the usage of the version control 
 system GIT (see www.git-scm.com for more information) for people who don't want 
@@ -9,15 +9,44 @@ git-push) all the time, but "just want to synchronize" their repository.
 
 Of course, when using GitSync, you are not as flexible as with the separate git 
 commands in the sense that GitSync always commits/syncs everything (apart from 
-the exceptions defined in the file ".gitignore"). Therefore GitSync does not 
-replace git-commit, etc., but is meant to  "complete" the set of commands by 
-providing a "do everything to sync my repository" command.
+the exceptions defined in the file ".gitignore", and unless the option -f is 
+used as explained below). 
+Therefore, GitSync does not replace git-commit, etc., but is meant to "complete"
+the set of commands by providing a "do everything to sync my repository" 
+command.
 
-The script offers several options collected in the section "# OPTIONS:". Change 
-the following variables to adjust to your needs:
+GitSync can be invoked with the following syntax:
+gitsync -m 'commit Message' -f 'Files to add' /location/of/repository
+
+All parameters are optional, i.e. when the -m option is omitted, you are asked 
+for a commit message later in the script. (Depending on the configuration of
+USE_EDITOR as mentioned below, a text editor is opened for this purpose.)
+If the -f option is omitted, everything will be synced. (Otherwise, only the 
+list of files/folders provided with that option will be considered).
+If the location/of/repository parameter (which is always the last!) is omitted, 
+the present folder is assumed to contain the repository (i.e. the location ".").
+
+The script offers several options collected in the section "# OPTIONS:". These 
+can be overridden by creating a GitSync-configuration file "gitsync.conf" 
+directly in your repository folder, i.e. the one containing the sub-folder 
+".git".
+Alternatively - or additionally - you may also create a file ".gitsync.conf" 
+in your home-directory, which will be parsed before the other one.
+(Usually that folder is "/home/username/" on UNIX/Linux systems, as well as in 
+the Cygwin-environment on Windows. In the msysGit-Version of Git for Windows, 
+that folder is "c:\Documents and Settings\username".) 
+
+
+Syntax of gitsync.conf (as shown in the sample file ./examples/gitsync.conf):
+VARIABLE_NAME value
+(Comments are ignored, and for compatibility with future versions should start 
+with #).
+
+The following variables - default values are on the left hand side - may be 
+adjusted to your needs:
 
 GIT_SERVER="auto" .......................... Change to "yes" or "no" if you want 
-			to override autodetection, i.e. "no" if you don't have 
+			to override auto-detection, i.e. "no" if you don't have 
                         a git server and only want to use git locally. (GitSync 
                         will then omit the calls "git pull" and "git push".)
                         Note, that if nothing has changed locally, GitSync will 
@@ -26,36 +55,34 @@ GIT_SERVER="auto" .......................... Change to "yes" or "no" if you want
 
 USE_EDITOR="no" .......................... Change to "yes" if you would like to 
                         use a text editor for providing git-commit comments. 
-                        (Uncomment and change the section 
-                        "# export EDITOR=emacs" 
-                        in the script to use a different editor than your 
-                        systems default.)
+                        Optionally, "yes" can also be replaced by the name of 
+                        your favourite editor to use instead of your systems
+                        default.
                         Additionally, it is also possible to provide a comment 
                         as an optional argument when calling the script: For 
                         example, you may use the command
-                        $ ./gitsync 'this is a comment'
+                        gitsync -m 'this is a comment'
                         which then passes your comment on to git-commit. (When 
-                        merely calling "$ ./gitsync" you are asked to provide 
+                        merely calling "gitsync" you are asked to provide 
                         a comment during runtime.)
-                        
 
 GIT_DIR=".git" .......................... Only change if you invoked the 
                         "git init" command with the $GIT_DIR environment 
                         variable of git set to something else than the default.
 
-GIT_REP="." ............................ Change this variable if you want to 
-                        call GitSync from some other place than the base 
-                        directory of your git repository (i.e. the directory 
-                        containing the subfolder ".git"). For example, if your 
-                        repository is located in "/home/somebody/somefolder" 
-                        (i.e. that folder contains the subfolder 
-                        "/home/somebody/somefolder/.git" after invoking 
-                        "git init", you may either place GitSync in 
-                        "/home/somebody/somefolder" and call it from there, or 
-                        set GIT_REP="/home/somebody/somefolder" to call the 
-                        script from anywhere in your system.
+CUSTOM_START_SCRIPT="" ................... Change to the name of a custom script
+                        that you would like to call before the actual syncing
+                        with GitSync
+
+CUSTOM_END_SCRIPT="" ..................... Change to the name of a custom script
+                        that you would like to call after the actual syncing
+                        with GitSync
+                        
+(GIT_REP-variable of older GitSync versions is deprecated, and replaced by 
+command line argument "/location/of/repository" explained above.)
 
 
-(C) 2010-01-08: Daniel Blaschke and Rene Sedmik 
+(C) 2010-04-13: Daniel Blaschke
+(C) 2009: Daniel Blaschke and Rene Sedmik 
 http://www.sourceforge.net/projects/gitsync/
 
