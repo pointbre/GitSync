@@ -1,0 +1,59 @@
+------------------------------------------
+HOW TO USE GITSYNC
+------------------------------------------
+
+GitSync is a shell script designed to simplify the usage of the version control 
+system GIT (see www.git-scm.com for more information) for people who don't want 
+to worry about several commands (such as git-add, git-commit, git-pull and 
+git-push) all the time, but "just want to synchronize" their repository.
+
+Of course, when using GitSync, you are not as flexible as with the separate git 
+commands in the sense that GitSync always commits/syncs everything (apart from 
+the exceptions defined in the file ".gitignore"). Therefore GitSync does not 
+replace git-commit, etc., but is meant to  "complete" the set of commands by 
+providing a "do everything to sync my repository" command.
+
+The script offers several options collected in the section "# OPTIONS:". Change 
+the following variables to adjust to your needs:
+
+GIT_SERVER="yes" .......................... Change to "no" if you don't have a 
+                        git server and only want to use git locally. (GitSync 
+                        will then omit the calls "git pull" and "git push".)
+                        Note, that if nothing has changed locally, GitSync will 
+                        still call "git pull" to download the latest version 
+                        from your git server, if GIT_SERVER="yes".
+
+USE_EDITOR="no" .......................... Change to "yes" if you would like to 
+                        use a text editor for providing git-commit comments. 
+                        (Uncomment and change the section 
+                        "# export EDITOR=emacs" 
+                        in the script to use a different editor than your 
+                        systems default.)
+                        Additionally, it is also possible to provide a comment 
+                        as an optional argument when calling the script: For 
+                        example, you may use the command
+                        $ ./gitsync 'this is a comment'
+                        which then passes your comment on to git-commit. (When 
+                        merely calling "$ ./gitsync" you are asked to provide 
+                        a comment during runtime.)
+                        
+
+GIT_DIR=".git" .......................... Only change if you invoked the 
+                        "git init" command with the $GIT_DIR environment 
+                        variable of git set to something else than the default.
+
+GIT_REP="." ............................ Change this variable if you want to 
+                        call GitSync from some other place than the base 
+                        directory of your git repository (i.e. the directory 
+                        containing the subfolder ".git"). For example, if your 
+                        repository is located in "/home/somebody/somefolder" 
+                        (i.e. that folder contains the subfolder 
+                        "/home/somebody/somefolder/.git" after invoking 
+                        "git init", you may either place GitSync in 
+                        "/home/somebody/somefolder" and call it from there, or 
+                        set GIT_REP="/home/somebody/somefolder" to call the 
+                        script from anywhere in your system.
+
+
+(C) 2009-12-04: Daniel Blaschke and Rene Sedmik
+
