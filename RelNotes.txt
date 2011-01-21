@@ -1,6 +1,15 @@
 GitSync Release Notes
 =====================
 
+Changes from version 1.2.1 to version 1.2.2:
+---------------------------------------------
+.) added support for absolute path names in custom start/end scripts
+   (previously only paths relative to the git repository)
+.) custom script names now must be at least 3 letters long
+.) warning message now displayed when gitsync is called by root
+.) small corrections/amendments to documentation
+
+
 Changes from version 1.2.0 to version 1.2.1:
 ---------------------------------------------
 .) gitsync -h/--help now displays usage-info

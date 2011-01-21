@@ -1,5 +1,5 @@
 ==========================================
-   HOW TO USE GITSYNC 1.2.1:
+   HOW TO USE GITSYNC 1.2.2:
 ==========================================
 
 GitSync is a shell script designed to simplify the usage of the version control 
@@ -30,8 +30,8 @@ Linux/Unix: Copy the file "gitsync" to /usr/bin/ or /usr/local/bin/
             In case you do not have administrator privileges, you can also copy
             "gitsync" to your home directory, i.e. ~/bin/ (create that folder, 
             if it does not exist). Then make sure that folder is added to PATH 
-            by adding a line "export PATH=$PATH:$HOME/bin" to either "~/.profile" 
-            or "~/.bashrc".
+            by adding a line "export PATH=$PATH:$HOME/bin" to either 
+            "~/.profile" or "~/.bashrc".
 
 Windows - msysGit: Just copy the file "gitsync" to "C:\Program Files\git\bin\"
 
@@ -79,41 +79,47 @@ with #).
 The following variables - default values are on the left hand side - may be 
 adjusted to your needs:
 
-GIT_SERVER="auto" .......................... Change to "yes" or "no" if you want 
-			to override auto-detection, i.e. "no" if you don't have 
-                        a git server and only want to use git locally. (GitSync 
-                        will then omit the calls "git pull" and "git push".)
-                        Note, that if nothing has changed locally, GitSync will 
-                        still call "git pull" to download the latest version 
-                        from your git server, if GIT_SERVER="yes".
+GIT_SERVER="auto" .......................... Change to "yes" or "no" if you want
+                      to override auto-detection, i.e. "no" if you don't have 
+                      a git server and only want to use git locally. (GitSync 
+                      will then omit the calls "git pull" and "git push".)
+                      Note, that if nothing has changed locally, GitSync will 
+                      still call "git pull" to download the latest version 
+                      from your git server, if GIT_SERVER="yes".
 
 USE_EDITOR="no" .......................... Change to "yes" if you would like to 
-                        use a text editor for providing git-commit comments. 
-                        Optionally, "yes" can also be replaced by the name of 
-                        your favourite editor to use instead of your systems
-                        default.
-                        Additionally, it is also possible to provide a comment 
-                        as an optional argument when calling the script: For 
-                        example, you may use the command
-                        gitsync -m 'this is a comment'
-                        which then passes your comment on to git-commit. (When 
-                        merely calling "gitsync" you are asked to provide 
-                        a comment during runtime.)
+                      use a text editor for providing git-commit comments. 
+                      Optionally, "yes" can also be replaced by the name of 
+                      your favourite editor to use instead of your systems
+                      default.
+                      Additionally, it is also possible to provide a comment 
+                      as an optional argument when calling the script: For 
+                      example, you may use the command
+                      gitsync -m 'this is a comment'
+                      which then passes your comment on to git-commit. (When 
+                      merely calling "gitsync" you are asked to provide 
+                      a comment during runtime.)
 
 GIT_DIR=".git" .......................... Only change if you invoked the 
-                        "git init" command with the $GIT_DIR environment 
-                        variable of git set to something else than the default.
+                      "git init" command with the $GIT_DIR environment 
+                      variable of git set to something else than the default.
 
 CUSTOM_START_SCRIPT="" ................... Change to the name of a custom script
-                        that you would like to call before the actual syncing
-                        with GitSync
+                      that you would like to call before the actual syncing
+                      with GitSync. The variable may contain an absolute path, 
+                      or a path relative to the location of your git repository.
+                      (Note that currently no arguments can be passed to the 
+                      custom script, i.e. no blanks allowed in this variable.)
 
 CUSTOM_END_SCRIPT="" ..................... Change to the name of a custom script
-                        that you would like to call after the actual syncing
-                        with GitSync
+                      that you would like to call after the actual syncing
+                      with GitSync. The variable may contain an absolute path, 
+                      or a path relative to the location of your git repository.
+                      (Note that currently no arguments can be passed to the 
+                      custom script, i.e. no blanks allowed in this variable.)
                         
 
-(C) 2010-05-25: Daniel Blaschke
+(C) 2010-08-02: Daniel Blaschke
 (C) 2009: Daniel Blaschke and Rene Sedmik 
 http://www.sourceforge.net/projects/gitsync/
 

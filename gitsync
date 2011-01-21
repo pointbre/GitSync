@@ -3,7 +3,7 @@
 # Welcome to GitSync - a commit and push script for easy using git!
 # Copyright (C) 2009: Daniel Blaschke and Rene Sedmik
 # Copyright (C) 2010: Daniel Blaschke
-# Web: http://www.sourceforge.net/projects/gitsync/
+# Web: http://gitsync.sourceforge.net
 #
 # This script is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -19,32 +19,32 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 #
-# Last change: 2010-05-19
+# Last change: 2010-08-02
 #
 #############################################
-# (GLOBAL) OPTIONS:
+# DEFAULT OPTIONS:
 #############################################
+# recommended way of overriding: create a config-file 'gitsync.conf' 
+# as described in the documentation (i.e. README and/or man-page)
 GIT_SERVER="auto"
 USE_EDITOR="no"
 GIT_DIR=".git"
-# change these values to the names of your custom scripts, if
-# you have any to be called before and after synchronizing
-# with GitSync!
 CUSTOM_START_SCRIPT=""
 CUSTOM_END_SCRIPT=""
+#
 #############################################
 # CODE:
 #############################################
 
 echo "------------------------------------------------------------"
-echo "GitSync 1.2.1 - a GIT update script"
+echo "GitSync 1.2.2 - a GIT update script"
 echo "------------------------------------------------------------"
 
 # check for git-installation
 GIT_PATH="`which git`"
 if [ "$GIT_PATH" = "" ] ; then 
  echo ""
- echo "ERROR: command git not found! Please install the version control system 'git'"
+ echo "ERROR: command 'git' not found! Please install the version control system 'git'"
  echo "from www.git-scm.com before using this script!"
  exit 1
 fi
@@ -83,18 +83,31 @@ GITP () {
 
 # function for calling CUSTOM_START/END_SCRIPT:
 SCRIPT () {
- if [ "$1" != "" ]; then
+ GS_scriptlength=$1
+ if [ "$1" != "" ] && [ "${#GS_scriptlength}" != "1" ] &&  [ "${#GS_scriptlength}" != "2" ]; then
   if test -x "./$1"; then
-	echo "Calling custom script '$1' ..."
+	echo "Calling custom script '${PWD}/$1' ..."
 	./$1
 	if [ "$1" = "$CUSTOM_START_SCRIPT" ]; then
 	 echo "done."
 	 echo "---------------------------------------"
 	fi
+  elif test -x "/$1"; then
+	echo "Calling custom script '$1' ..."
+        /$1
+        if [ "$1" = "$CUSTOM_START_SCRIPT" ]; then
+         echo "done."
+         echo "---------------------------------------"
+        fi
   else
+	echo "---------------------------------------"
 	echo "WARNING: Unable to call your custom script '$1'."
 	echo "Make sure it is present and executable!"
+	echo "Skipping ..."
+	echo "---------------------------------------"
   fi
+ elif [ "$1" != "" ]; then
+  echo "WARNING: Name of custom script '$1' is too short, skipping..."
  fi
 }
 
@@ -194,11 +207,27 @@ if [ "$GIT_SERVER" != "yes" ] && [ "$GIT_SERVER" != "no" ] && [ "$GIT_SERVER" !=
 fi
 
 # check if we are in the correct directory
+if [ "${PWD##*/}" = "$GIT_DIR" ]; then cd ..; fi
 if test -r ./$GIT_DIR/config; then
-   dirok=true
+   continue
 else
-   echo "ERROR: Please call this script from the base directory of your git-repository!"
+   echo "ERROR: folder '${PWD}' is not a valid git repository! Use 'git init' to create one - for details see manual of git."
    exit 1
+fi
+
+# warn if gitsync is run as root
+if [ "`which whoami`" != "" ]; then
+ if [ "`whoami`" = "root" ]; then
+  echo "WARNING: you are logged in as 'root'."
+  echo "Custom scripts are set to '$CUSTOM_START_SCRIPT' and '$CUSTOM_END_SCRIPT', and current directory is ${PWD}."
+  echo "Are you sure you want continue running this script and possibly the two above?"
+  echo "y/[n]"
+  read GS_security_question
+  if [ "$GS_security_question" != "y" ]; then 
+	echo "Aborted by user."
+	exit 3
+  fi
+ fi
 fi
 
 # if USE_EDITOR is set to the name of an editor, use it

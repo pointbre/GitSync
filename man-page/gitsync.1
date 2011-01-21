@@ -1,4 +1,4 @@
-.TH gitsync 1 "May 19 2010" "Daniel Blaschke"
+.TH gitsync 1 "July 20 2010" "Daniel Blaschke"
 .SH NAME
 gitsync \- A commit and push script for easy using git
 .SH SYNOPSIS
@@ -26,7 +26,7 @@ If the -f option is omitted, everything will be synced. (Otherwise, only the
 list of files/folders provided with that option will be considered).
 If the location/of/repository parameter (which is always the last!) is omitted, 
 the present folder is assumed to contain the repository (i.e. the location ".").
-.SS CONIGURATION
+.SS CONFIGURATION
 The script offers several options defined by configuration variables. Their default values 
 can be overridden by creating a GitSync-configuration file "gitsync.conf" 
 directly in your repository folder, i.e. the one containing the sub-folder 
@@ -34,7 +34,7 @@ directly in your repository folder, i.e. the one containing the sub-folder
 Alternatively - or additionally - you may also create a file ".gitsync.conf" 
 in your home-directory, which will be parsed before the other one.
 .PP
-Syntax of gitsync.conf (as shown in the sample file /usr/share/GitSync/examples/gitsync.conf):
+Syntax of gitsync.conf (as shown in the sample file GitSync/examples/gitsync.conf):
 VARIABLE_NAME value
 (Comments are ignored, and for compatibility with future versions should start 
 with #).
@@ -55,10 +55,10 @@ GIT_DIR=".git" .......................... Only change if you invoked
 the "git init" command with the $GIT_DIR environment variable of git set to something else than the default.
 .TP
 CUSTOM_START_SCRIPT="" ................... Change to the name of a 
-custom script that you would like to call before the actual syncing with GitSync
+custom script that you would like to call before the actual syncing with GitSync. The variable may contain an absolute path, or a path relative to the location of your git repository. (Note that currently no arguments can be passed to the custom script, i.e. no blanks allowed in this variable.)
 .TP
 CUSTOM_END_SCRIPT="" ..................... Change to the name of a 
-custom script that you would like to call after the actual syncing with GitSync
+custom script that you would like to call after the actual syncing with GitSync. The variable may contain an absolute path, or a path relative to the location of your git repository. (Note that currently no arguments can be passed to the custom script, i.e. no blanks allowed in this variable.)
 .PP
 .SH "SEE ALSO"
 GitSync/README, 
