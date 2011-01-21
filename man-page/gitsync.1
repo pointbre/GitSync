@@ -1,0 +1,65 @@
+.TH gitsync 1 "May 19 2010" "Daniel Blaschke"
+.SH NAME
+gitsync \- A commit and push script for easy using git
+.SH SYNOPSIS
+.B gitsync
+.BR [-m " 'commit Message' " -f " 'Files to add' /location/of/repository " -h/--help]
+.PP
+.SH DESCRIPTION
+GitSync is a shell script designed to simplify the usage of the version control 
+system GIT (see www.git-scm.com for more information) for people who don't want 
+to worry about several commands (such as git-add, git-commit, git-pull and 
+git-push) all the time, but "just want to synchronize" their repository.
+.PP
+Of course, when using GitSync, you are not as flexible as with the separate git 
+commands in the sense that GitSync always commits/syncs everything (apart from 
+the exceptions defined in the file ".gitignore", and unless the option -f is 
+used as explained below).
+Therefore, GitSync does not replace git-commit, etc., but is meant to "complete"
+the set of commands by providing a "do everything to sync my repository" 
+command.
+.SH OPTIONS
+All parameters are optional, i.e. when the -m option is omitted, you are asked 
+for a commit message later in the script. (Depending on the configuration of
+USE_EDITOR as mentioned below, a text editor is opened for this purpose.)
+If the -f option is omitted, everything will be synced. (Otherwise, only the 
+list of files/folders provided with that option will be considered).
+If the location/of/repository parameter (which is always the last!) is omitted, 
+the present folder is assumed to contain the repository (i.e. the location ".").
+.SS CONIGURATION
+The script offers several options defined by configuration variables. Their default values 
+can be overridden by creating a GitSync-configuration file "gitsync.conf" 
+directly in your repository folder, i.e. the one containing the sub-folder 
+".git".
+Alternatively - or additionally - you may also create a file ".gitsync.conf" 
+in your home-directory, which will be parsed before the other one.
+.PP
+Syntax of gitsync.conf (as shown in the sample file /usr/share/GitSync/examples/gitsync.conf):
+VARIABLE_NAME value
+(Comments are ignored, and for compatibility with future versions should start 
+with #).
+.PP
+The following variables - default values are on the left hand side - may be 
+adjusted to your needs:
+.TP
+GIT_SERVER="auto" .......................... Change to "yes" or "no" 
+if you want to override auto-detection, i.e. "no" if you don't have a git server and only want to use git locally. (GitSync will then omit the calls "git pull" and "git push".) Note, that if nothing has changed locally, GitSync will still call "git pull" to download the latest version from your git server, if GIT_SERVER="yes".
+.TP
+USE_EDITOR="no" .......................... Change to "yes" if you 
+would like to use a text editor for providing git-commit comments. Optionally, "yes" can also be replaced by the name of your favourite editor to use instead of your systems default.
+Additionally, it is also possible to provide a comment as an optional argument when calling the script: For example, you may use the command
+gitsync -m 'this is a comment'
+which then passes your comment on to git-commit. (When merely calling "gitsync" you are asked to provide a comment during runtime.)
+.TP
+GIT_DIR=".git" .......................... Only change if you invoked 
+the "git init" command with the $GIT_DIR environment variable of git set to something else than the default.
+.TP
+CUSTOM_START_SCRIPT="" ................... Change to the name of a 
+custom script that you would like to call before the actual syncing with GitSync
+.TP
+CUSTOM_END_SCRIPT="" ..................... Change to the name of a 
+custom script that you would like to call after the actual syncing with GitSync
+.PP
+.SH "SEE ALSO"
+GitSync/README, 
+GitSync/examples/

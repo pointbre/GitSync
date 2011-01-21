@@ -1,5 +1,5 @@
 ==========================================
-   HOW TO USE GITSYNC 1.2.0:
+   HOW TO USE GITSYNC 1.2.1:
 ==========================================
 
 GitSync is a shell script designed to simplify the usage of the version control 
@@ -15,8 +15,39 @@ Therefore, GitSync does not replace git-commit, etc., but is meant to "complete"
 the set of commands by providing a "do everything to sync my repository" 
 command.
 
+
+INSTALLING
+------------------------------------------
+In order to use GitSync, the version control system "git" must be installed. In 
+order to do so, download and install from its homepage www.git-scm.com.
+Afterwards, follow these instructions:
+
+Linux/Unix: Copy the file "gitsync" to /usr/bin/ or /usr/local/bin/
+            To also install the manual, copy the file "gitsync.1.gz", which is 
+            located in the subfolder "man-page" of this package, to 
+            /usr/share/man/man1/ or /usr/local/share/man/man1/
+
+            In case you do not have administrator privileges, you can also copy
+            "gitsync" to your home directory, i.e. ~/bin/ (create that folder, 
+            if it does not exist). Then make sure that folder is added to PATH 
+            by adding a line "export PATH=$PATH:$HOME/bin" to either "~/.profile" 
+            or "~/.bashrc".
+
+Windows - msysGit: Just copy the file "gitsync" to "C:\Program Files\git\bin\"
+
+Windows - Cygwin:  Copy the file "gitsync" to "C:\cygwin\usr\bin\"
+                   Optionally, the manual "gitsync.1.gz", which is located 
+                   in the subfolder "man-page" of this package, may be copied
+                   to "C:\cygwin\usr\share\man\man1\"
+                   (The gitsync-manual essentially contains the same information
+                   as this README-file, except for the install-instructions.)
+
+
+OPTIONS
+------------------------------------------
 GitSync can be invoked with the following syntax:
 gitsync -m 'commit Message' -f 'Files to add' /location/of/repository
+(gitsync -h/--help prints usage-info and exits)
 
 All parameters are optional, i.e. when the -m option is omitted, you are asked 
 for a commit message later in the script. (Depending on the configuration of
@@ -26,10 +57,13 @@ list of files/folders provided with that option will be considered).
 If the location/of/repository parameter (which is always the last!) is omitted, 
 the present folder is assumed to contain the repository (i.e. the location ".").
 
-The script offers several options collected in the section "# OPTIONS:". These 
-can be overridden by creating a GitSync-configuration file "gitsync.conf" 
-directly in your repository folder, i.e. the one containing the sub-folder 
-".git".
+
+CONFIGURATION
+------------------------------------------
+The script offers several options defined by configuration variables. Their 
+default values can be overridden by creating a GitSync-configuration file 
+"gitsync.conf" directly in your repository folder, i.e. the one containing 
+the sub-folder ".git".
 Alternatively - or additionally - you may also create a file ".gitsync.conf" 
 in your home-directory, which will be parsed before the other one.
 (Usually that folder is "/home/username/" on UNIX/Linux systems, as well as in 
@@ -78,11 +112,8 @@ CUSTOM_END_SCRIPT="" ..................... Change to the name of a custom script
                         that you would like to call after the actual syncing
                         with GitSync
                         
-(GIT_REP-variable of older GitSync versions is deprecated, and replaced by 
-command line argument "/location/of/repository" explained above.)
 
-
-(C) 2010-04-13: Daniel Blaschke
+(C) 2010-05-25: Daniel Blaschke
 (C) 2009: Daniel Blaschke and Rene Sedmik 
 http://www.sourceforge.net/projects/gitsync/
 

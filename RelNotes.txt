@@ -1,6 +1,18 @@
 GitSync Release Notes
 =====================
 
+Changes from version 1.2.0 to version 1.2.1:
+---------------------------------------------
+.) gitsync -h/--help now displays usage-info
+.) invalid command line options now trigger error-message instead of being 
+   silently ignored
+.) added support for commenting out valid entries in "gitsync.conf" using "#"
+.) cleanup of gitsync-output
+.) created manpage (based on README-file) for Linux/Unix, and added install-
+   instructions to README-file
+.) if 'git commit' aborts, 'git add' is now undone automatically by calling
+   'git reset -q'
+
 
 Changes from version 1.1.1 to version 1.2.0:
 ---------------------------------------------
@@ -35,7 +47,7 @@ Changes from version 1.0.1 to version 1.1.0:
    .git/config for a configured git-server (i.e. remote 
    repository) in order to determine whether pull/push are 
    necessary. (Nonetheless, the GIT_SERVER-options "yes" 
-   and "no" are still valid and will override the check above.
+   and "no" are still valid and will override the check above.)
 .) minor bugfix
 .) README-file updated accordingly
 
@@ -46,3 +58,4 @@ Changes from version 1.0.0 to version 1.0.1:
    to push to the server (even if nothing is to be committed), 
    so that if the network connection breaks down during a 
    commit/push, another call of gitsync will continue the job.
+

@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 #
-# Last change: 2010-04-13
+# Last change: 2010-05-19
 #
 #############################################
 # (GLOBAL) OPTIONS:
@@ -37,8 +37,7 @@ CUSTOM_END_SCRIPT=""
 #############################################
 
 echo "------------------------------------------------------------"
-echo "GitSync - a GIT update script"
-echo "Version 1.2.0"
+echo "GitSync 1.2.1 - a GIT update script"
 echo "------------------------------------------------------------"
 
 # check for git-installation
@@ -54,7 +53,7 @@ fi
 # function for reading config files
 READCFG () {
  if [ "$GS_config" != "" ]; then
-    echo "GitSync config '$GS_config' found - reading"
+    GS_skip="0";
     GS_key="";
     for line in $(cat "$GS_config"); do
      if [ "$GS_key" = "GIT_SERVER" ]; then GIT_SERVER="$line"; fi;
@@ -62,7 +61,12 @@ READCFG () {
      if [ "$GS_key" = "GIT_DIR" ]; then GIT_DIR="$line"; fi;
      if [ "$GS_key" = "CUSTOM_START_SCRIPT" ]; then CUSTOM_START_SCRIPT="$line"; fi;
      if [ "$GS_key" = "CUSTOM_END_SCRIPT" ]; then CUSTOM_END_SCRIPT="$line"; fi;
-     GS_key=$line;
+     if [ "$GS_skip" = "0" ]; then
+      GS_key=$line;
+     else
+      GS_skip="0";
+     fi;
+     if [ "$line" = "#" ]; then GS_skip="1"; fi;
     done
  fi
 }
@@ -72,7 +76,7 @@ GITP () {
  if git $1; then
   echo "ok."
  else
-  echo "ERROR: GIT-$1 returned an error."
+  echo "ERROR: 'git $1' returned an error."
   exit 2
  fi
 }
@@ -110,6 +114,17 @@ GITC () {
   fi
  fi
 }
+
+# function for printing usage information:
+USAGE () {
+ echo ""
+ echo "GitSync-syntax is (where all arguments are optional):"
+ echo "gitsync -m 'commit Message' -f 'Files to add' /location/of/repository"
+ echo "gitsync -h/--help displays this usage info"
+ echo ""
+ exit 1
+}
+
 ####
 
 
@@ -119,14 +134,36 @@ GITADDLIST=""
 GIT_REP="."
 
 PARSE=""
+PARSE_R="0"
+PARSE_m="0"
+PARSE_f="0"
 for i
 do
- if [ "$PARSE" = "-m" ]; then GITCOMM=$i; fi
- if [ "$PARSE" = "-f" ]; then GITADDLIST=$i; fi
+ if [ "$PARSE_R" = "1" ]; then PARSE_R="2"; fi
+ if [ "$PARSE_R" = "0" ]; then PARSE_R="1"; fi
+ if [ "$PARSE" = "-m" ] && [ "$i" != "-m" ] && [ "$i" != "-f" ] && [ "$PARSE_m" = "0" ]; then 
+  GITCOMM=$i
+  PARSE_R="0"
+  PARSE_m="1"
+ fi
+ if [ "$PARSE" = "-f" ] && [ "$i" != "-m" ] && [ "$i" != "-f" ] && [ "$PARSE_f" = "0" ]; then 
+  GITADDLIST=$i
+  PARSE_R="0"
+  PARSE_f="1"
+ fi
+ if [ "$PARSE_R" = "2" ]; then 
+  echo "ERROR: invalid command line option '$PARSE $i'."
+  USAGE
+ fi
  PARSE=$i
 done
 if [ "$PARSE" != "" ] && [ "$PARSE" != "$GITCOMM" ] && [ "$PARSE" != "$GITADDLIST" ]; then GIT_REP=$PARSE; fi
 
+
+# if only (or last) argument is -h/--help, print usage and exit
+if [ "$GIT_REP" = "-h" ] || [ "$GIT_REP" = "--help" ]; then
+ USAGE
+fi
 
 # entering the directory of the repository
 if cd "$GIT_REP"; then 
@@ -134,20 +171,20 @@ if cd "$GIT_REP"; then
 else
  echo ""
  echo "ERROR: folder '$GIT_REP' does not exist. Possibly a mistyped command line argument?"
- echo "GitSync-syntax is (where all arguments are optional):"
- echo "gitsync -m 'commit Message' -f 'Files to add' /location/of/repository"
- exit 1
+ USAGE
 fi
 
 
 # searching for custom GitSync-configuration file
 GS_config=""
-if test -r "$HOME/gitsync.conf"; then GS_config="$HOME/gitsync.conf"; fi;
-if test -r "$HOME/.gitsync.conf"; then GS_config="$HOME/.gitsync.conf"; fi;
+GS_config_all=""
+if test -r "$HOME/gitsync.conf"; then GS_config="$HOME/gitsync.conf"; GS_config_all="$GS_config"; fi;
+if test -r "$HOME/.gitsync.conf"; then GS_config="$HOME/.gitsync.conf"; GS_config_all="$GS_config"; fi;
 READCFG
 GS_config=""
-if test -r "./gitsync.conf"; then GS_config="./gitsync.conf"; fi;
+if test -r "./gitsync.conf"; then GS_config="./gitsync.conf"; GS_config_all="$GS_config_all $GS_config"; fi;
 READCFG
+if [ "$GS_config_all" != "" ]; then echo "Config file(s) found: $GS_config_all"; fi;
 
 
 # check values of variables for validity
@@ -186,7 +223,7 @@ if [ "$GIT_SERVER" = "auto" ]; then
  else
 	GIT_SERVER="no"
  fi
- echo "Checking whether a git-server is configured: $GIT_SERVER"
+# echo "Checking whether a git-server is configured: $GIT_SERVER"
 fi
 
 # check if commit is necessary, else exit after pulling/merging from server
@@ -218,7 +255,7 @@ if if [ "$GITADDLIST" = "" ]; then
   echo "ok."
   echo "---------------------------------------"
 else
-  echo "ERROR: GIT-add returned an error."
+  echo "ERROR: 'git add' returned an error."
   exit 2
 fi
 
@@ -241,7 +278,10 @@ if if [ "$GITCOMM" = "" ]; then
   echo "---------------------------------------"
 
 else
-  echo "ERROR: GIT-commit returned an error."
+  echo "ERROR: 'git commit' returned an error."
+  echo "Undoing 'git add' ..."
+  git reset -q
+  echo "Aborting due to 'git commit' error."
   exit 2
 fi
 
