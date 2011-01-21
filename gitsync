@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 #
-# Last change: 2009-11-05
+# Last change: 2009-12-09
 #
 #############################################
 # OPTIONS:
@@ -33,7 +33,7 @@ GIT_REP="."
 #############################################
 
 echo "------------------------------------------------------------"
-echo -e "GitSync - GIT update script \nVersion 1.0"
+echo -e "GitSync - GIT update script \nVersion 1.0.1"
 echo "------------------------------------------------------------"
 
 cd $GIT_REP
@@ -70,6 +70,13 @@ if [ "$(git status | grep 'nothing to commit')" != "" ]; then
 	else
 	  echo -e "\nERROR: GIT-pull returned an error.\n"
 	  exit -2
+	fi
+	echo -e "Pushing to the global repository ..."
+	if git push; then
+	  echo "ok."
+	else
+	  echo -e "\nERROR: GIT-push returned an error.\n"
+	  exit -3
 	fi
   else
 	echo -e "Nothing to commit (working directory clean)!"
