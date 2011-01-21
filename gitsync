@@ -2,6 +2,7 @@
 #
 # Welcome to GitSync - a commit and push script for easy using git!
 # Copyright (C) 2009-2010: Daniel Blaschke and Rene Sedmik
+# Web: http://www.sourceforge.net/projects/gitsync/
 #
 # This script is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -17,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 #
-# Last change: 2010-01-08
+# Last change: 2010-01-15
 #
 #############################################
 # OPTIONS:
@@ -33,7 +34,8 @@ GIT_REP="."
 #############################################
 
 echo "------------------------------------------------------------"
-echo -e "GitSync - GIT update script \nVersion 1.1.0"
+echo "GitSync - GIT update script"
+echo "Version 1.1.1"
 echo "------------------------------------------------------------"
 
 cd $GIT_REP
@@ -42,7 +44,7 @@ if test -r ./$GIT_DIR/config; then
    dirok=true
 else
    echo "ERROR: Please call this script from the base directory of your git-repository!"
-   exit -1
+   exit 1
 fi
 
 # Uncomment and customize if you want git to use a different editor than 
@@ -75,22 +77,22 @@ fi
 echo "Checking repository status ..."
 if [ "$(git status | grep 'nothing to commit')" != "" ]; then
   if [ "$GIT_SERVER" = "yes" ]; then
-	echo -e "Nothing to commit - updating your local repository instead ..."
+	echo "Nothing to commit - updating your local repository instead ..."
 	if git pull; then
 	  echo "ok."
 	else
-	  echo -e "\nERROR: GIT-pull returned an error.\n"
-	  exit -2
+	  echo "ERROR: GIT-pull returned an error."
+	  exit 2
 	fi
-	echo -e "Pushing to the global repository ..."
+	echo "Pushing to the global repository ..."
 	if git push; then
 	  echo "ok."
 	else
-	  echo -e "\nERROR: GIT-push returned an error.\n"
-	  exit -3
+	  echo "ERROR: GIT-push returned an error."
+	  exit 3
 	fi
   else
-	echo -e "Nothing to commit (working directory clean)!"
+	echo "Nothing to commit (working directory clean)."
   fi
 	exit 0
 fi
@@ -98,17 +100,17 @@ echo "done."
 echo "---------------------------------------"
 
 # adding new files to the local repository
-echo -e "Adding new files ..."
+echo "Adding new files ..."
 if git add .; then
   echo "ok."
   echo "---------------------------------------"
 else
-  echo "\nERROR: GIT-add returned an error."
-  exit -2
+  echo "ERROR: GIT-add returned an error."
+  exit 2
 fi
 
 # committing the local changes
-echo -e "Committing all of your changes ..."
+echo "Committing all of your changes ..."
 
 if if [ "$1" = "" ]; then 
 	  if [ "$USE_EDITOR" = "yes" ]; then
@@ -119,36 +121,36 @@ if if [ "$1" = "" ]; then
 		git commit -a -m "$gitcomment"
 	  fi
    else
-	  echo -e "\n... using your comment: $1"
+	  echo "... using your comment: $1"
 	  git commit -a -m "$1"
    fi; then
   echo "ok."
   echo "---------------------------------------"
 
 else
-  echo -e "\nERROR: GIT-commit returned an error.\n"
-  exit -2
+  echo "ERROR: GIT-commit returned an error."
+  exit 2
 fi
 
 if [ "$GIT_SERVER" = "yes" ]; then
 # initiating a pull to achieve a consistent local repository
- echo -e "Updating your local repository ..."
+ echo "Updating your local repository ..."
  if git pull; then
 	echo "ok."
 	echo "---------------------------------------"
  else
-	echo -e "\nERROR: GIT-pull returned an error.\n"
-	exit -2
+	echo "ERROR: GIT-pull returned an error."
+	exit 2
  fi
 
 # pushing the changes to the global repo
- echo -e "Pushing to the global repository ..."
+ echo "Pushing to the global repository ..."
  if git push; then
 	echo "ok."
 	echo "---------------------------------------"
  else
-	echo -e "\nERROR: GIT-push returned an error.\n"
-	exit -3
+	echo "ERROR: GIT-push returned an error."
+	exit 3
  fi
  echo "done."
  echo ""

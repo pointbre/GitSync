@@ -56,5 +56,6 @@ GIT_REP="." ............................ Change this variable if you want to
                         script from anywhere in your system.
 
 
-(C) 2010-01-08: Daniel Blaschke and Rene Sedmik
+(C) 2010-01-08: Daniel Blaschke and Rene Sedmik 
+http://www.sourceforge.net/projects/gitsync/
 
