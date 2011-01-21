@@ -16,8 +16,9 @@ providing a "do everything to sync my repository" command.
 The script offers several options collected in the section "# OPTIONS:". Change 
 the following variables to adjust to your needs:
 
-GIT_SERVER="yes" .......................... Change to "no" if you don't have a 
-                        git server and only want to use git locally. (GitSync 
+GIT_SERVER="auto" .......................... Change to "yes" or "no" if you want 
+			to override autodetection, i.e. "no" if you don't have 
+                        a git server and only want to use git locally. (GitSync 
                         will then omit the calls "git pull" and "git push".)
                         Note, that if nothing has changed locally, GitSync will 
                         still call "git pull" to download the latest version 
@@ -55,5 +56,5 @@ GIT_REP="." ............................ Change this variable if you want to
                         script from anywhere in your system.
 
 
-(C) 2009-12-04: Daniel Blaschke and Rene Sedmik
+(C) 2010-01-08: Daniel Blaschke and Rene Sedmik
 
