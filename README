@@ -103,6 +103,11 @@ USE_EDITOR="no" .......................... Change to "yes" if you would like to
 GIT_DIR=".git" .......................... Only change if you invoked the 
                       "git init" command with the $GIT_DIR environment 
                       variable of git set to something else than the default.
+                      
+GARBAGE_COLLECT="yes"  ................... If turned on, automatic garbage 
+                      collection (i.e. 'git gc --auto') will be run in order 
+                      to cleanup and optimize your local repository whenever 
+                      this becomes necessary. Change to "no" to deactivate. 
 
 CUSTOM_START_SCRIPT="" ................... Change to the name of a custom script
                       that you would like to call before the actual syncing
@@ -119,7 +124,8 @@ CUSTOM_END_SCRIPT="" ..................... Change to the name of a custom script
                       custom script, i.e. no blanks allowed in this variable.)
                         
 
-(C) 2010-08-02: Daniel Blaschke
+last change to this file: 2011-07-07
+(C) 2010-2011: Daniel Blaschke
 (C) 2009: Daniel Blaschke and Rene Sedmik 
-http://www.sourceforge.net/projects/gitsync/
+http://www.gitsync.sourceforge.net
 

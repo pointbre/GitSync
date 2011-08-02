@@ -1,6 +1,14 @@
 GitSync Release Notes
 =====================
 
+Changes from version 1.2.2 to version 1.2.3:
+---------------------------------------------
+.) added optional call to git-gc --auto (automatic "garbage clean") after 
+   committing; this is controlled by the new variable 'GARBAGE_COLLECT' as
+   described in the README file
+.) minor code cleanup/improvements
+
+
 Changes from version 1.2.1 to version 1.2.2:
 ---------------------------------------------
 .) added support for absolute path names in custom start/end scripts

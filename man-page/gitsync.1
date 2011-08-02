@@ -1,4 +1,4 @@
-.TH gitsync 1 "July 20 2010" "Daniel Blaschke"
+.TH gitsync 1 "July 7 2011" "Daniel Blaschke"
 .SH NAME
 gitsync \- A commit and push script for easy using git
 .SH SYNOPSIS
@@ -53,6 +53,9 @@ which then passes your comment on to git-commit. (When merely calling "gitsync" 
 .TP
 GIT_DIR=".git" .......................... Only change if you invoked 
 the "git init" command with the $GIT_DIR environment variable of git set to something else than the default.
+.TP
+GARBAGE_COLLECT="yes" ................... If turned on, automatic 
+garbage collection (i.e. 'git gc --auto') will be run in order to cleanup and optimize your local repository whenever this becomes necessary. Change to "no" to deactivate. 
 .TP
 CUSTOM_START_SCRIPT="" ................... Change to the name of a 
 custom script that you would like to call before the actual syncing with GitSync. The variable may contain an absolute path, or a path relative to the location of your git repository. (Note that currently no arguments can be passed to the custom script, i.e. no blanks allowed in this variable.)
