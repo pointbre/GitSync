@@ -1,9 +1,9 @@
 ==========================================
-   HOW TO USE GITSYNC 1.2.2:
+   HOW TO USE GITSYNC
 ==========================================
 
 GitSync is a shell script designed to simplify the usage of the version control 
-system GIT (see www.git-scm.com for more information) for people who don't want 
+system git (see www.git-scm.com for more information) for people who don't want 
 to worry about several commands (such as git-add, git-commit, git-pull and 
 git-push) all the time, but "just want to synchronize" their repository.
 
@@ -73,8 +73,7 @@ that folder is "c:\Documents and Settings\username".)
 
 Syntax of gitsync.conf (as shown in the sample file ./examples/gitsync.conf):
 VARIABLE_NAME value
-(Comments are ignored, and for compatibility with future versions should start 
-with #).
+Comments are ignored and should start with #.
 
 The following variables - default values are on the left hand side - may be 
 adjusted to your needs:
@@ -122,10 +121,12 @@ CUSTOM_END_SCRIPT="" ..................... Change to the name of a custom script
                       or a path relative to the location of your git repository.
                       (Note that currently no arguments can be passed to the 
                       custom script, i.e. no blanks allowed in this variable.)
+
+VERBOSITY="on" ..................... Change to "off" for silent runs.
                         
 
-last change to this file: 2011-07-07
-(C) 2010-2011: Daniel Blaschke
+last change to this file: 2013-01-12
+(C) 2010-2013: Daniel Blaschke
 (C) 2009: Daniel Blaschke and Rene Sedmik 
 http://www.gitsync.sourceforge.net
 
