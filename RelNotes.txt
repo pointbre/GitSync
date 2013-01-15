@@ -1,6 +1,13 @@
 GitSync Release Notes
 =====================
 
+Changes from version 1.2.3 to version 1.2.4:
+---------------------------------------------
+.) gitsync -v/--version now prints its version number
+.) made the script less noisy
+.) added a "silent" mode by means of a new configuration variable 'VERBOSITY'
+
+
 Changes from version 1.2.2 to version 1.2.3:
 ---------------------------------------------
 .) added optional call to git-gc --auto (automatic "garbage clean") after 

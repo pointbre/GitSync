@@ -1,13 +1,13 @@
-.TH gitsync 1 "July 7 2011" "Daniel Blaschke"
+.TH gitsync 1 "January 12 2013" "Daniel Blaschke"
 .SH NAME
-gitsync \- A commit and push script for easy using git
+gitsync \- A synchronization script for git repositories
 .SH SYNOPSIS
 .B gitsync
 .BR [-m " 'commit Message' " -f " 'Files to add' /location/of/repository " -h/--help]
 .PP
 .SH DESCRIPTION
 GitSync is a shell script designed to simplify the usage of the version control 
-system GIT (see www.git-scm.com for more information) for people who don't want 
+system git (see www.git-scm.com for more information) for people who don't want 
 to worry about several commands (such as git-add, git-commit, git-pull and 
 git-push) all the time, but "just want to synchronize" their repository.
 .PP
@@ -36,8 +36,8 @@ in your home-directory, which will be parsed before the other one.
 .PP
 Syntax of gitsync.conf (as shown in the sample file GitSync/examples/gitsync.conf):
 VARIABLE_NAME value
-(Comments are ignored, and for compatibility with future versions should start 
-with #).
+.br
+Comments are ignored and should start with #.
 .PP
 The following variables - default values are on the left hand side - may be 
 adjusted to your needs:
@@ -62,6 +62,8 @@ custom script that you would like to call before the actual syncing with GitSync
 .TP
 CUSTOM_END_SCRIPT="" ..................... Change to the name of a 
 custom script that you would like to call after the actual syncing with GitSync. The variable may contain an absolute path, or a path relative to the location of your git repository. (Note that currently no arguments can be passed to the custom script, i.e. no blanks allowed in this variable.)
+.TP
+VERBOSITY="on" ..................... Change to "off" for silent runs.
 .PP
 .SH "SEE ALSO"
 GitSync/README, 
