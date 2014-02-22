@@ -19,11 +19,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 #
-# Last change: 2013-01-12
+# Last change: 2014-02-22
 #
 #############################################
 # SCRIPT VERSION:
-GITSYNC_VERSION="1.2.4"
+GITSYNC_VERSION="1.2.5~beta1"
 #
 #############################################
 # DEFAULT OPTIONS:
@@ -31,6 +31,7 @@ GITSYNC_VERSION="1.2.4"
 # recommended way of overriding: create a config-file 'gitsync.conf' 
 # as described in the documentation (i.e. README and/or man-page)
 GIT_SERVER="auto"
+SERVER_DESTINATION="--all"
 USE_EDITOR="no"
 GIT_DIR=".git"
 GARBAGE_COLLECT="yes"
@@ -65,6 +66,7 @@ READCFG () {
      if [ "$GS_key" = "CUSTOM_END_SCRIPT" ]; then CUSTOM_END_SCRIPT="$line"; fi;
      if [ "$GS_key" = "GARBAGE_COLLECT" ]; then GARBAGE_COLLECT="$line"; fi;
      if [ "$GS_key" = "VERBOSITY" ]; then VERBOSITY="$line"; fi;
+     if [ "$GS_key" = "SERVER_DESTINATION" ]; then SERVER_DESTINATION="$line"; fi;
      if [ "$GS_skip" = "0" ]; then
       GS_key=$line;
      else
@@ -74,13 +76,17 @@ READCFG () {
     done
  fi
 }
+# implement check for valid $SERVER_DESTINATION variable: either "" or "--all" or one specific destination (the latter should trigger GIT_SERVER=yes)
+# thoroughly test these changes! and make sure the default behaviour doesn't change...
+# multiple destinations: if not in .git/config, they should be present in .git/remotes - cf. man git-pull/push/fetch
+# perhaps make sure these are scanned also when GIT_SERVER=auto (in which case SERVER_DESTINATION="" means pull/push from default destination only)
 
 # function for calling git pull/push:
 GITP () {
  if ! if [ "$VERBOSITY" != "off" ]; then 
-     git $1; 
+     git $1 $SERVER_DESTINATION; 
     else
-     git $1 -q;
+     git $1 $SERVER_DESTINATION -q;
     fi; then
   echo "ERROR: 'git $1' returned an error."
   exit 2
